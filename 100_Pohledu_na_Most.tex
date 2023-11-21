@@ -1,0 +1,35 @@
+% Nastaveni jazyka -----------------------------------------------------------
+\mainlanguage[cz]
+\language[cz]
+\enableregime[utf]
+
+% Makro \uv pro text v uvozovkách
+\define[1]\uv{\quotation{#1}}
+
+
+\starttext
+% Obsah knihy
+\placecontent
+
+\startluacode
+    -- Načtení všech souborů v adresáři vyhovující '201*.tex'
+    require "lfs"
+
+    chapters = {}   -- new array
+    for file in lfs.dir(".") do
+        if file:match("201.*%.tex") then
+            table.insert(chapters, file)
+         end
+    end
+
+    table.sort(chapters)
+
+    for i = 1, #chapters do
+        print("Including chapter: " ..  chapters[i])
+        tex.print("\\input " .. chapters[i])
+    end
+\stopluacode
+
+\input doslov.tex
+
+\stoptext
