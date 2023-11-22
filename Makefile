@@ -1,4 +1,5 @@
 TEX = context
+SOURCES = $(wildcard *.tex)
 
 # Automatic variables
 #
@@ -11,18 +12,21 @@ TEX = context
 
 ################################################################################
 
-.SUFFIXES:
-.SUFFIXES: .c .o
-
 all: 100_Pohledu_na_Most.pdf
 
-100_Pohledu_na_Most.pdf: 100_Pohledu_na_Most.tex
-	$(TEX) $<
-	
+100_Pohledu_na_Most.pdf: $(SOURCES)
+	$(TEX) 100_Pohledu_na_Most.tex
+
+vlna: $(SOURCES)
+	@for i in $^; do \
+			vlna $$i; \
+		done
+	# Delete backup files created by vlna
+	# rm $$(find | grep '\.te~')
 
 ################################################################################
 
-.PHONY: all clean veryclean
+.PHONY: all vlna clean veryclean
 
 clean:
 	-rm 100_Pohledu_na_Most.pdf

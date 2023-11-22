@@ -3,9 +3,43 @@
 \language[cz]
 \enableregime[utf]
 
+\setupbodyfontenvironment[default][em=italic]
+
+% Možnosti pro vnořené uvozovky
+\setupdelimitedtext[quotation:1][
+    left={\symbol[leftquotation]},
+    right={\symbol[rightquotation]}
+]
+
+\setupdelimitedtext[quotation:2][
+    left={\symbol[leftquote]},
+    right={\symbol[rightquote]}
+]
+
 % Makro \uv pro text v uvozovkách
 \define[1]\uv{\quotation{#1}}
 
+% Odstavce
+% mezery mezi odstavci
+\setupwhitespace[none]
+
+% velikost odsazeni
+\setupindenting[medium, next]  % none, small, medium, bix, next, first, [rozmer]
+\indenting[yes]
+
+% Iniciály
+
+\setupinitial[n=1,continue=yes]
+
+\setuphead[chapter][
+  after={\placeinitial},
+%  page=no,
+]
+
+% Vzhled obsahu ---------------------------------------------------------------
+\setupcombinedlist[content][level=1,alternative=c]█
+% a -- stranka hned za, b -- stranka na konci radku,█
+% c -- jako b, ale teckovany radek, d -- jako jeden odstavec
 
 \starttext
 % Obsah knihy
