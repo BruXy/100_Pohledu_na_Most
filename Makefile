@@ -18,7 +18,8 @@ PHOTOS = ./fotografie
 all: 100_Pohledu_na_Most.pdf
 
 100_Pohledu_na_Most.pdf: $(SOURCES)
-	$(TEX) 100_Pohledu_na_Most.tex
+#	export PHOTOS=$(PHOTOS) && $(TEX) 100_Pohledu_na_Most.tex
+	PHOTOS=$(PHOTOS) $(TEX) 100_Pohledu_na_Most.tex
 
 vlna: $(SOURCES)
 	@for i in $^; do \

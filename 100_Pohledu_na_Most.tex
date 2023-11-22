@@ -3,21 +3,45 @@
 \language[cz]
 \enableregime[utf]
 
+%\usetypescript[schola]
+\usetypescript[gentium]
+\setupbodyfont[gentium,11pt]
+
 \setupbodyfontenvironment[default][em=italic]
 
+\setupinteraction[state=start, style=normal, color=blue]
+
+%\setupblank[flexible]
+
+\setuppapersize[A4]
+
+\setuplayout
+    [backspace=30mm,
+     width=middle,
+     topspace=0mm,
+     height=middle,
+     bottomspace=2cm,
+     footer=10mm,
+     ]
+
+% Debug
+\showframe
+\showsetups
+
+
 % Možnosti pro vnořené uvozovky
-\setupdelimitedtext[quotation:1][
+\setupdelimitedtext[quotation:1][%
     left={\symbol[leftquotation]},
-    right={\symbol[rightquotation]}
+    right={\symbol[rightquotation]}%
 ]
 
-\setupdelimitedtext[quotation:2][
+\setupdelimitedtext[quotation:2][%
     left={\symbol[leftquote]},
-    right={\symbol[rightquote]}
+    right={\symbol[rightquote]}%
 ]
 
-% Makro \uv pro text v uvozovkách
-\define[1]\uv{\quotation{#1}}
+% Makro \uv pro text v uvozovkách (\quotation)
+\let\uv\quotation
 
 % Odstavce
 % mezery mezi odstavci
@@ -36,9 +60,32 @@
 %  page=no,
 ]
 
+\setuphead[chapter][
+%numberstyle={\switchtobodyfont[64pt]},
+number=no
+%numbercommand={},%\Cislovani,
+%style={\switchtobodyfont[36pt]},
+%header=high,
+%before={},
+%after={\nowhitespace\blank[3*line]},
+%command=\MyChapter,
+%header=empty,
+]
+
+% Makro pro vložení fotografie
+\define[1]\foto{%
+    
+%    \vfill
+
+%    \placefigure[bottom][none]{}{
+    \placefigure[none] {} {
+       \externalfigure[#1][height=5cm]%
+    }
+}
+
 % Vzhled obsahu ---------------------------------------------------------------
-\setupcombinedlist[content][level=1,alternative=c]█
-% a -- stranka hned za, b -- stranka na konci radku,█
+\setupcombinedlist[content][level=1,alternative=c]
+% a -- stranka hned za, b -- stranka na konci radku,
 % c -- jako b, ale teckovany radek, d -- jako jeden odstavec
 
 \starttext
@@ -46,7 +93,27 @@
 \placecontent
 
 \startluacode
-    -- Načtení všech souborů v adresáři vyhovující '201*.tex'
+    -- Adresář s foty nastaven v Makefile
+    PHOTO_DIR = os.getenv("PHOTOS")
+
+    -- Najdi jméno fotografie v souboru na řádku s "Foto"
+    function get_image(file)
+        for line in io.lines(file) do
+            if line:find("Foto") then
+                -- print(line)
+                -- řetězec za posledním lomítkem je lokální jméno souboru
+                img_file = line:gmatch("[^/]+$")()
+                if line:match(".jpg") then
+                    return img_file
+                else
+                    -- přidej příponu pokud chybí
+                    return img_file .. ".jpg"
+                end
+            end
+        end
+    end
+
+    -- Načtení všech souborů v~adresáři vyhovující '201*.tex'
     require "lfs"
 
     chapters = {}   -- new array
@@ -60,7 +127,13 @@
 
     for i = 1, #chapters do
         print("Including chapter: " ..  chapters[i])
+        img = get_image(chapters[i])
+        print("Image: " .. img)
+        -- Vlož kapitolu
         tex.print("\\input " .. chapters[i])
+        -- Vlož foto
+--        tex.print(("\\externalfigure[%s/%s][height=5cm]"):format(PHOTO_DIR, img))
+        tex.print(("\\foto{%s/%s}"):format(PHOTO_DIR, img))
     end
 \stopluacode
 
