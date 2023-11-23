@@ -1,11 +1,15 @@
-% Nastaveni jazyka -----------------------------------------------------------
+% Nastaveni jazyka
+
 \mainlanguage[cz]
 \language[cz]
+\setuplanguage[cz][spacing=broad] % zapnutí větší mezery za větnou tečkou
 \enableregime[utf]
+
+% Nastaveni fontu
 
 %\usetypescript[schola]
 \usetypescript[gentium]
-\setupbodyfont[gentium,11pt]
+\setupbodyfont[gentium,12pt]
 
 \setupbodyfontenvironment[default][em=italic]
 
@@ -74,7 +78,6 @@ number=no
 
 % Makro pro vložení fotografie
 \define[1]\foto{%
-    
 %    \vfill
 
 %    \placefigure[bottom][none]{}{
@@ -83,15 +86,21 @@ number=no
     }
 }
 
-% Vzhled obsahu ---------------------------------------------------------------
+% Vzhled obsahu
 \setupcombinedlist[content][level=1,alternative=c]
 % a -- stranka hned za, b -- stranka na konci radku,
 % c -- jako b, ale teckovany radek, d -- jako jeden odstavec
+
+% Potlačení odstavcového odsazení
+\let\no\noindentation
 
 \starttext
 % Obsah knihy
 \placecontent
 
+%\input uvod.tex
+
+% Kapitoly
 \startluacode
     -- Adresář s foty nastaven v Makefile
     PHOTO_DIR = os.getenv("PHOTOS")
