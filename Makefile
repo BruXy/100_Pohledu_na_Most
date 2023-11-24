@@ -1,8 +1,7 @@
 TEX = context
 SOURCES = $(wildcard *.tex)
 PHOTOS = ./fotografie
-#AGENT='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36' 
-
+OUTPUT = 100_Pohledu_na_Most
 
 # Automatic variables
 #
@@ -15,11 +14,10 @@ PHOTOS = ./fotografie
 
 ################################################################################
 
-all: 100_Pohledu_na_Most.pdf
+all: $(OUTPUT).pdf
 
-100_Pohledu_na_Most.pdf: $(SOURCES)
-#	export PHOTOS=$(PHOTOS) && $(TEX) 100_Pohledu_na_Most.tex
-	PHOTOS=$(PHOTOS) $(TEX) 100_Pohledu_na_Most.tex
+$(OUTPUT).pdf: $(SOURCES)
+	PHOTOS=$(PHOTOS) $(TEX) $(OUTPUT).tex
 
 vlna: $(SOURCES)
 	@for i in $^; do \
@@ -29,6 +27,7 @@ vlna: $(SOURCES)
 # Stažení obrázků z iDNES.cz, pokud odkaz nevede přímo na název
 # souboru '*.jpg', pak je nutné nastavit cookie adb=1. Pro snadnější
 # práci se souborem je u některých přípona doplněna.
+
 download:
 	@mkdir -p $(PHOTOS)
 	for i in $$(sed -ne '/^% Foto:/{s///;p}' 20*.tex); do \
@@ -37,11 +36,14 @@ download:
 		[ ! -f "$$output" ] && curl --cookie "adb=1" $$i -o $$output || \
 			printf "%s already exists.\n" "$$output"; \
 		done
+
 ################################################################################
 
 .PHONY: all vlna clean veryclean download
 
 clean:
-	-rm 100_Pohledu_na_Most.pdf
+	-rm $(OUTPUT){-error.log,.log,.tua,.tuc}
 
 veryclean: clean
+	rm $(OUTPUT).pdf
+
