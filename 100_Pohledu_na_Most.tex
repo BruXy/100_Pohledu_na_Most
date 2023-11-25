@@ -1,15 +1,14 @@
 % Nastaveni jazyka
-
 \mainlanguage[cz]
 \language[cz]
 \setuplanguage[cz][spacing=broad] % zapnutí větší mezery za větnou tečkou
-\enableregime[utf]
+%\enableregime[utf]
 
 % Nastaveni fontu
 
 %\usetypescript[schola]
-\usetypescript[gentium]
-\setupbodyfont[gentium,10pt]
+%\usetypescript[gentium]
+\setupbodyfont[plex,10pt]
 
 \setupbodyfontenvironment[default][em=italic]
 
@@ -54,7 +53,7 @@
 
 % Iniciály
 
-\setupinitial[n=1,continue=yes]
+\setupinitial[n=1,distance=-0.5pt,continue=yes]
 
 \setuphead[chapter][
     number=no,
@@ -81,7 +80,7 @@
 % Makro pro vložení fotografie
 \define[1]\foto{%
     \placefigure[top,none]{} {
-       \externalfigure[#1][maxheight=0.5\textheight,maxwidth=\makeupwidth]%
+       \externalfigure[#1][maxheight=0.4\textheight,maxwidth=\makeupwidth]%
     }
 }
 
@@ -107,9 +106,17 @@
 %\showsetups
 
 \startfrontmatter
+
+\input{titul.tex}
+
 % Obsah knihy
+
+
 \startcolumns[n=3]
-\placecontent
+
+%\completecontent % Nadpis + obsa
+%\placecontent % obsah 
+
 \stopcolumns
 
 \stopfrontmatter
@@ -168,6 +175,6 @@
 \stopluacode
 \stopbodymatter
 
-\input doslov.tex
+\input{doslov.tex}
 
 \stoptext
