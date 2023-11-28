@@ -2,10 +2,11 @@
 \mainlanguage[cz]
 \language[cz]
 \setuplanguage[cz][spacing=broad] % zapnutí větší mezery za větnou tečkou
-%\enableregime[utf]
+
+\setuptolerance[horizontal,stretch] % rozvolnění rozlití do bloku
+\setuptolerance[vertical,verystrict]
 
 % Nastaveni fontu
-
 %\usetypescript[schola]
 %\usetypescript[gentium]
 \setupbodyfont[plex,10pt]
@@ -14,22 +15,18 @@
 
 \setupinteraction[state=start, style=normal, color=blue]
 
-%\setupblank[flexible]
-
 \setuppapersize[A4]
 
-\setuplayout
-    [backspace=15mm,
-     width=middle,
-     topspace=0mm,
-     height=middle,
-     bottomspace=1cm,
-     footer=10mm,
-     ]
+\setuplayout[%
+    backspace=15mm,
+    width=middle,
+    topspace=0mm,
+    height=middle,
+    bottomspace=1cm,
+    footer=10mm,%
+]
 
-
-
-% Možnosti pro vnořené uvozovky
+% Možnosti pro vnořené uvozovky:
 \setupdelimitedtext[quotation:1][%
     left={\symbol[leftquotation]},
     right={\symbol[rightquotation]}%
@@ -52,10 +49,10 @@
 \indenting[yes]
 
 % Iniciály
-
 \setupinitial[n=1,distance=-0.5pt,continue=yes]
 
-\setuphead[chapter][
+% Kapitoly, sekce
+\setuphead[chapter][%
     number=no,
     location=middle,
     style={\bf\switchtobodyfont[24pt]},
@@ -63,7 +60,12 @@
     after={\blank[.5em]\startcolumns[n=2]\noindentation\placeinitial},
 ]
 
-\setuphead[section][number=no]
+\setuphead[section][%
+    number=no,
+    style=\bf,
+    before={\blank[1em]},
+    after={\blank[0.5em]}
+]
 
 \setuppagenumbering[%
     alternative=singlesided,  % doublesided
@@ -76,7 +78,6 @@
 %>··command=\Page,
 ]
 
-
 % Makro pro vložení fotografie
 \define[1]\foto{%
     \placefigure[top,none]{} {
@@ -84,44 +85,35 @@
     }
 }
 
-\define[1]\kapitola{
-%    \startcolumns[n=2]
-
-    \input{#1}
-
-%    \stopcolumns
-}
-
 % Vzhled obsahu
-\setupcombinedlist[content][level=1,alternative=c]
-% a -- stranka hned za, b -- stranka na konci radku,
-% c -- jako b, ale teckovany radek, d -- jako jeden odstavec
+\setupcombinedlist[content][alternative=c,list={chapter}]
 
 % Potlačení odstavcového odsazení
 \let\no\noindentation
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \starttext
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 % Debug
 %\showframe
 %\showsetups
 
 \startfrontmatter
-
+% Titulní stránka
+\setuppagenumber[state=stop]
 \input{titul.tex}
+\page
+\setuppagenumber[state=start]
 
 % Obsah knihy
-
-
 \startcolumns[n=3]
-
-%\completecontent % Nadpis + obsa
-%\placecontent % obsah 
-
+{\switchtobodyfont[9pt]\placecontent}
 \stopcolumns
 
 \stopfrontmatter
 
-%\input uvod.tex
+\input{predmluva.tex}
 
 % Kapitoly
 \startbodymatter
@@ -151,7 +143,7 @@
 
     chapters = {}   -- new array
     for file in lfs.dir(".") do
-        if file:match("201.*%.tex") then
+        if file:match("^201.*%.tex$") then
             table.insert(chapters, file)
          end
     end
@@ -163,11 +155,9 @@
         img = get_image(chapters[i])
         print("Image: " .. img)
         -- Vlož kapitolu
---        tex.print("\\startcolumns")
+        -- tex.print("\\startcolumns") -- nastaveno jako after v setuphead chapter
         tex.print(("\\input{%s}"):format(chapters[i]))
-        tex.print("\\stopcolumns")
-
---        tex.print(("\\kapitola{%s}"):format(chapters[i]))
+        tex.print("\\stopcolumns") -- uzavírá startcolumns v chapter
 
         -- Vlož foto
         tex.print(("\\foto{%s/%s}"):format(PHOTO_DIR, img))
@@ -175,6 +165,7 @@
 \stopluacode
 \stopbodymatter
 
-\input{doslov.tex}
-
+    \startbackmatter
+        \input{doslov.tex}
+    \stopbackmatter
 \stoptext
